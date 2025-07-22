@@ -2,6 +2,7 @@
 import streamlit as st
 import pandas as pd
 import fnmatch
+import re
 
 st.title("School Bus Order Compliance Checker")
 
@@ -49,8 +50,13 @@ if order_file and spec_file and selected_state and vehicle_type:
                     st.error(f"Vehicle column matching '{vehicle_type}' not found after parsing.")
                 else:
                     vehicle_col = matching_cols[0]  # use the first match
-                    required_patterns = data_df[vehicle_col].dropna().astype(str).str.strip()
-                    required_patterns = [p for p in required_patterns if "-" in p and any(c.isdigit() for c in p)]
+                    raw_patterns = data_df[vehicle_col].dropna().astype(str).str.strip()
+
+                    # Use regex to filter valid option code patterns like 300-72-12 or 300-*-*
+                    required_patterns = [
+                        p for p in raw_patterns
+                        if re.fullmatch(r"[0-9*?]{3}-[0-9*?]{2}-[0-9*?]{2}", p)
+                    ]
 
                     # Match patterns
                     matched, missing = [], []
