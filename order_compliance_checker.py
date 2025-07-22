@@ -55,7 +55,7 @@ if order_file and spec_file and selected_state and vehicle_type:
                     # Use regex to filter valid option code patterns like 300-72-12 or 300-*-*
                     required_patterns = [
                         p for p in raw_patterns
-                        if re.fullmatch(r"[0-9*?]{3}-[0-9*?]{2}-[0-9*?]{2}", p)
+                        if re.fullmatch(r"[0-9*?]{3}-[0-9*?]{2}-[0-9*?]{2}", p) or fnmatch.fnmatch(p, "*-*-*")
                     ]
 
                     # Match patterns
