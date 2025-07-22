@@ -42,10 +42,14 @@ if order_file and spec_file and selected_state and vehicle_type:
                 headers = state_df.iloc[header_row_index].astype(str).tolist()
                 data_df.columns = headers
 
-                if vehicle_type not in data_df.columns:
-                    st.error(f"Vehicle column '{vehicle_type}' not found after parsing.")
+                # Use fuzzy matching to find vehicle column
+                matching_cols = [col for col in data_df.columns if vehicle_type.lower() in str(col).lower().strip()]
+
+                if not matching_cols:
+                    st.error(f"Vehicle column matching '{vehicle_type}' not found after parsing.")
                 else:
-                    required_patterns = data_df[vehicle_type].dropna().astype(str).str.strip()
+                    vehicle_col = matching_cols[0]  # use the first match
+                    required_patterns = data_df[vehicle_col].dropna().astype(str).str.strip()
                     required_patterns = [p for p in required_patterns if "-" in p and any(c.isdigit() for c in p)]
 
                     # Match patterns
